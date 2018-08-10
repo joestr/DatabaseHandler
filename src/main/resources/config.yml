@@ -1,0 +1,23 @@
+# defines the acces to the database for other plugins
+
+# type defines the Database Type: 'mysql', 'postgre' or 'sqlite'
+type: none
+
+# declares the hostname and the port, '-1' sets the port to the default database type port
+host: localhost
+port: -1
+
+# the name of the database or the path to the database file when type set to 'sqlite'
+database: random
+
+# the connection parameters, ignore this settings when using 'sqlite'
+username: postgres
+password: l33tPassw0rd
+
+# Should the Plugin prints debug messages to the console?
+debug: false
+
+# Should the plugin automatically search for new updates?
+check-for-updates: true
+# Automatically downloads updates to the updates folder of the server. The server owner only needs to restart the server
+download-updates: false

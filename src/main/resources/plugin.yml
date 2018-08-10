@@ -1,0 +1,11 @@
+main: net.dertod2.DatabaseHandler.Binary.DatabaseHandler
+
+name: DatabaseHandler
+version: 0.2.0
+author: DerTod2
+website: http://dertod2.net/
+
+commands:
+  'databasehandler':
+    aliases: ['dh']
+    usage: /<command>
