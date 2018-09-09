@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface TableInfo {
-	/**
-	 * The Name of the Table in the database
-	 */
-	String tableName();
+    /**
+     * The Name of the Table in the database
+     */
+    String tableName();
 }

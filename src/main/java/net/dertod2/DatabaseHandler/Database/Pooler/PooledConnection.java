@@ -20,326 +20,335 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 public class PooledConnection implements Connection {
-	protected ConnectionPool poolReference;
-	
-	protected Connection rawConnection;
-	
-	protected long created;
-	protected long lastActive;
-	protected long loaned;
-	
-	protected boolean returnToPool = false;
-	protected boolean isInPool = true;
-	
-	protected boolean autoClose = true;
-	
-	protected String currentUser = "None";
-	
-	protected PooledConnection(ConnectionPool poolReference, Connection connection) {
-		this.poolReference = poolReference;
-		
-		this.rawConnection = connection;
-		
-		this.created = System.currentTimeMillis();
-		this.lastActive = System.currentTimeMillis();
-	}
-	
-	public Connection getRawConnection() {
-		return this.rawConnection;
-	}
-	
-	public ConnectionPool getPool() {
-		return this.poolReference;
-	}
-	
-	public long getCreated() {
-		return this.created;
-	}
-	
-	public long getLifetime() {
-		return System.currentTimeMillis() - this.created;
-	}
-	
-	public long getLastActive() {
-		return this.lastActive;
-	}
-	
-	public long getIdletime() {
-		return System.currentTimeMillis() - this.lastActive;
-	}
-	
-	public long getLoaned() {
-		return this.loaned;
-	}
-	
-	public long getLoanedtime() {
-		return System.currentTimeMillis() - this.loaned;
-	}
-	
-	public boolean isInPool() {
-		return this.isInPool;
-	}
-	
-	public String getFetcher() {
-		return this.currentUser;
-	}
-	
-	/**
-	 * Defines if the Pool should kill the connection when the fetcher doesn't gives it back to the pool
-	 * @param autoClose
-	 */
-	public void setAutoClose(boolean autoClose) {
-		this.autoClose = autoClose;
-	}
-	
-	/**
-	 * Defines if the Pool should kill the connection when the fetcher doesn't gives it back to the pool
-	 * @return
-	 */
-	public boolean getAutoClose() {
-		return this.autoClose;
-	}
-	
-	public <T> T unwrap(Class<T> iface) throws SQLException {
-		return this.rawConnection.unwrap(iface);
-	}
+    protected ConnectionPool poolReference;
 
-	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		return this.rawConnection.isWrapperFor(iface);
-	}
+    protected Connection rawConnection;
 
-	public Statement createStatement() throws SQLException {
-		return this.rawConnection.createStatement();
-	}
+    protected long created;
+    protected long lastActive;
+    protected long loaned;
 
-	public PreparedStatement prepareStatement(String sql) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql);
-	}
+    protected boolean returnToPool = false;
+    protected boolean isInPool = true;
 
-	public CallableStatement prepareCall(String sql) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareCall(sql);
-	}
+    protected boolean autoClose = true;
 
-	public String nativeSQL(String sql) throws SQLException {
-		return this.rawConnection.nativeSQL(sql);
-	}
+    protected String currentUser = "None";
 
-	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		this.rawConnection.setAutoCommit(autoCommit);
-	}
+    protected PooledConnection(ConnectionPool poolReference, Connection connection) {
+        this.poolReference = poolReference;
 
-	public boolean getAutoCommit() throws SQLException {
-		return this.rawConnection.getAutoCommit();
-	}
+        this.rawConnection = connection;
 
-	public void commit() throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.commit();
-	}
+        this.created = System.currentTimeMillis();
+        this.lastActive = System.currentTimeMillis();
+    }
 
-	public void rollback() throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.rollback();
-	}
+    public Connection getRawConnection() {
+        return this.rawConnection;
+    }
 
-	/**
-	 * Returns this Connection to the Connection Pool instead of closing it.
-	 */
-	public void close() throws SQLException {
-		if (this.poolReference == null) this.rawConnection.close();
-		
-		this.returnToPool = true; // To inform the Pool Watcher
-	}
+    public ConnectionPool getPool() {
+        return this.poolReference;
+    }
 
-	public boolean isClosed() throws SQLException {
-		return this.rawConnection.isClosed();
-	}
+    public long getCreated() {
+        return this.created;
+    }
 
-	public DatabaseMetaData getMetaData() throws SQLException {
-		return this.rawConnection.getMetaData();
-	}
+    public long getLifetime() {
+        return System.currentTimeMillis() - this.created;
+    }
 
-	public void setReadOnly(boolean readOnly) throws SQLException {
-		this.rawConnection.setReadOnly(readOnly);
-	}
+    public long getLastActive() {
+        return this.lastActive;
+    }
 
-	public boolean isReadOnly() throws SQLException {
-		return this.rawConnection.isReadOnly();
-	}
+    public long getIdletime() {
+        return System.currentTimeMillis() - this.lastActive;
+    }
 
-	public void setCatalog(String catalog) throws SQLException {
-		this.rawConnection.setCatalog(catalog);
-	}
+    public long getLoaned() {
+        return this.loaned;
+    }
 
-	public String getCatalog() throws SQLException {
-		return this.rawConnection.getCatalog();
-	}
+    public long getLoanedtime() {
+        return System.currentTimeMillis() - this.loaned;
+    }
 
-	public void setTransactionIsolation(int level) throws SQLException {
-		this.rawConnection.setTransactionIsolation(level);
-	}
+    public boolean isInPool() {
+        return this.isInPool;
+    }
 
-	public int getTransactionIsolation() throws SQLException {
-		return this.rawConnection.getTransactionIsolation();
-	}
+    public String getFetcher() {
+        return this.currentUser;
+    }
 
-	public SQLWarning getWarnings() throws SQLException {
-		return this.rawConnection.getWarnings();
-	}
+    /**
+     * Defines if the Pool should kill the connection when the fetcher doesn't gives
+     * it back to the pool
+     * 
+     * @param autoClose
+     */
+    public void setAutoClose(boolean autoClose) {
+        this.autoClose = autoClose;
+    }
 
-	public void clearWarnings() throws SQLException {
-		this.rawConnection.clearWarnings();
-	}
+    /**
+     * Defines if the Pool should kill the connection when the fetcher doesn't gives
+     * it back to the pool
+     * 
+     * @return
+     */
+    public boolean getAutoClose() {
+        return this.autoClose;
+    }
 
-	public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.createStatement(resultSetType, resultSetConcurrency);
-	}
+    public <T> T unwrap(Class<T> iface) throws SQLException {
+        return this.rawConnection.unwrap(iface);
+    }
 
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql, resultSetType, resultSetConcurrency);
-	}
+    public boolean isWrapperFor(Class<?> iface) throws SQLException {
+        return this.rawConnection.isWrapperFor(iface);
+    }
 
-	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareCall(sql, resultSetType, resultSetConcurrency);
-	}
+    public Statement createStatement() throws SQLException {
+        return this.rawConnection.createStatement();
+    }
 
-	public Map<String, Class<?>> getTypeMap() throws SQLException {
-		return this.rawConnection.getTypeMap();
-	}
+    public PreparedStatement prepareStatement(String sql) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql);
+    }
 
-	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-		this.rawConnection.setTypeMap(map);
-	}
+    public CallableStatement prepareCall(String sql) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareCall(sql);
+    }
 
-	public void setHoldability(int holdability) throws SQLException {
-		this.rawConnection.setHoldability(holdability);
-	}
+    public String nativeSQL(String sql) throws SQLException {
+        return this.rawConnection.nativeSQL(sql);
+    }
 
-	public int getHoldability() throws SQLException {
-		return this.rawConnection.getHoldability();
-	}
+    public void setAutoCommit(boolean autoCommit) throws SQLException {
+        this.rawConnection.setAutoCommit(autoCommit);
+    }
 
-	public Savepoint setSavepoint() throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.setSavepoint();
-	}
+    public boolean getAutoCommit() throws SQLException {
+        return this.rawConnection.getAutoCommit();
+    }
 
-	public Savepoint setSavepoint(String name) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.setSavepoint(name);
-	}
+    public void commit() throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.commit();
+    }
 
-	public void rollback(Savepoint savepoint) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.rollback(savepoint);
-	}
+    public void rollback() throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.rollback();
+    }
 
-	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.releaseSavepoint(savepoint);
-	}
+    /**
+     * Returns this Connection to the Connection Pool instead of closing it.
+     */
+    public void close() throws SQLException {
+        if (this.poolReference == null)
+            this.rawConnection.close();
 
-	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
-	}
+        this.returnToPool = true; // To inform the Pool Watcher
+    }
 
-	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-	}
+    public boolean isClosed() throws SQLException {
+        return this.rawConnection.isClosed();
+    }
 
-	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
-	}
+    public DatabaseMetaData getMetaData() throws SQLException {
+        return this.rawConnection.getMetaData();
+    }
 
-	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql, autoGeneratedKeys);
-	}
+    public void setReadOnly(boolean readOnly) throws SQLException {
+        this.rawConnection.setReadOnly(readOnly);
+    }
 
-	public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql, columnIndexes);
-	}
+    public boolean isReadOnly() throws SQLException {
+        return this.rawConnection.isReadOnly();
+    }
 
-	public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.prepareStatement(sql, columnNames);
-	}
+    public void setCatalog(String catalog) throws SQLException {
+        this.rawConnection.setCatalog(catalog);
+    }
 
-	public Clob createClob() throws SQLException {
-		return this.rawConnection.createClob();
-	}
+    public String getCatalog() throws SQLException {
+        return this.rawConnection.getCatalog();
+    }
 
-	public Blob createBlob() throws SQLException {
-		return this.rawConnection.createBlob();
-	}
+    public void setTransactionIsolation(int level) throws SQLException {
+        this.rawConnection.setTransactionIsolation(level);
+    }
 
-	public NClob createNClob() throws SQLException {
-		return this.rawConnection.createNClob();
-	}
+    public int getTransactionIsolation() throws SQLException {
+        return this.rawConnection.getTransactionIsolation();
+    }
 
-	public SQLXML createSQLXML() throws SQLException {
-		return this.rawConnection.createSQLXML();
-	}
+    public SQLWarning getWarnings() throws SQLException {
+        return this.rawConnection.getWarnings();
+    }
 
-	public boolean isValid(int timeout) throws SQLException {
-		return this.rawConnection.isValid(timeout);
-	}
+    public void clearWarnings() throws SQLException {
+        this.rawConnection.clearWarnings();
+    }
 
-	public void setClientInfo(String name, String value) throws SQLClientInfoException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.setClientInfo(name, value);
-	}
+    public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.createStatement(resultSetType, resultSetConcurrency);
+    }
 
-	public void setClientInfo(Properties properties) throws SQLClientInfoException {
-		this.lastActive = System.currentTimeMillis();
-		this.rawConnection.setClientInfo(properties);
-	}
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+            throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql, resultSetType, resultSetConcurrency);
+    }
 
-	public String getClientInfo(String name) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.getClientInfo(name);
-	}
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareCall(sql, resultSetType, resultSetConcurrency);
+    }
 
-	public Properties getClientInfo() throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.getClientInfo();
-	}
+    public Map<String, Class<?>> getTypeMap() throws SQLException {
+        return this.rawConnection.getTypeMap();
+    }
 
-	public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-		return this.rawConnection.createArrayOf(typeName, elements);
-	}
+    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+        this.rawConnection.setTypeMap(map);
+    }
 
-	public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-		this.lastActive = System.currentTimeMillis();
-		return this.rawConnection.createStruct(typeName, attributes);
-	}
+    public void setHoldability(int holdability) throws SQLException {
+        this.rawConnection.setHoldability(holdability);
+    }
 
-	public void setSchema(String schema) throws SQLException {
-		this.rawConnection.setSchema(schema);
-	}
+    public int getHoldability() throws SQLException {
+        return this.rawConnection.getHoldability();
+    }
 
-	public String getSchema() throws SQLException {
-		return this.rawConnection.getSchema();
-	}
+    public Savepoint setSavepoint() throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.setSavepoint();
+    }
 
-	public void abort(Executor executor) throws SQLException {
-		this.rawConnection.abort(executor);
-	}
+    public Savepoint setSavepoint(String name) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.setSavepoint(name);
+    }
 
-	public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-		this.rawConnection.setNetworkTimeout(executor, milliseconds);
-	}
+    public void rollback(Savepoint savepoint) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.rollback(savepoint);
+    }
 
-	public int getNetworkTimeout() throws SQLException {
-		return this.rawConnection.getNetworkTimeout();
-	}
+    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.releaseSavepoint(savepoint);
+    }
+
+    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+            throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+    }
+
+    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
+            int resultSetHoldability) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+    }
+
+    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
+            int resultSetHoldability) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+    }
+
+    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql, autoGeneratedKeys);
+    }
+
+    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql, columnIndexes);
+    }
+
+    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.prepareStatement(sql, columnNames);
+    }
+
+    public Clob createClob() throws SQLException {
+        return this.rawConnection.createClob();
+    }
+
+    public Blob createBlob() throws SQLException {
+        return this.rawConnection.createBlob();
+    }
+
+    public NClob createNClob() throws SQLException {
+        return this.rawConnection.createNClob();
+    }
+
+    public SQLXML createSQLXML() throws SQLException {
+        return this.rawConnection.createSQLXML();
+    }
+
+    public boolean isValid(int timeout) throws SQLException {
+        return this.rawConnection.isValid(timeout);
+    }
+
+    public void setClientInfo(String name, String value) throws SQLClientInfoException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.setClientInfo(name, value);
+    }
+
+    public void setClientInfo(Properties properties) throws SQLClientInfoException {
+        this.lastActive = System.currentTimeMillis();
+        this.rawConnection.setClientInfo(properties);
+    }
+
+    public String getClientInfo(String name) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.getClientInfo(name);
+    }
+
+    public Properties getClientInfo() throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.getClientInfo();
+    }
+
+    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+        return this.rawConnection.createArrayOf(typeName, elements);
+    }
+
+    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+        this.lastActive = System.currentTimeMillis();
+        return this.rawConnection.createStruct(typeName, attributes);
+    }
+
+    public void setSchema(String schema) throws SQLException {
+        this.rawConnection.setSchema(schema);
+    }
+
+    public String getSchema() throws SQLException {
+        return this.rawConnection.getSchema();
+    }
+
+    public void abort(Executor executor) throws SQLException {
+        this.rawConnection.abort(executor);
+    }
+
+    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+        this.rawConnection.setNetworkTimeout(executor, milliseconds);
+    }
+
+    public int getNetworkTimeout() throws SQLException {
+        return this.rawConnection.getNetworkTimeout();
+    }
 }
