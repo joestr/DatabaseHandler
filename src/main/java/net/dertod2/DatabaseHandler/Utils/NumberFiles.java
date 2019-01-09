@@ -5,8 +5,8 @@ import java.io.FilenameFilter;
 
 public class NumberFiles implements FilenameFilter {
 
-	public boolean accept(File dir, String name) {
-		return name.matches("[0-9]+");
-	}
+    public boolean accept(File dir, String name) {
+        return name.matches("[0-9]+");
+    }
 
 }
