@@ -8,7 +8,7 @@
     <version>0.2.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>DatabaseHandler 1.13 Development</name>
+    <name>DatabaseHandler</name>
     <url>http://dertod2.net</url>
     <description>Controls Database Connections and allows simple execution and tracking of tables</description>
 
@@ -101,19 +101,19 @@
             <url>http://mvnrepository.com/artifact/org.xerial</url>
         </repository>
         <repository>
-            <id>joestr-repo-mirror</id>
-            <url>https://repo2.joestr.xyz/repository/repo-mirror/</url>
+            <id>joestr-repo</id>
+            <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
             <id>joestr-repo</id>
-            <url>https://repo2.joestr.xyz/repository/repo/</url>
+            <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </repository>
         <snapshotRepository>
             <id>joestr-repo</id>
-            <url>https://repo2.joestr.xyz/repository/repo/</url>
+            <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </snapshotRepository>
     </distributionManagement>
 
