@@ -32,15 +32,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.2.1</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.postgresql:postgresql</include>
+                            <include>org.xerial:sqlite-jdbc</include>
+                        </includes>
+                        <!--<excludes>
+                            <exclude>*:*</exclude>
+                        </excludes>-->
+                    </artifactSet>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
                         </goals>
-                        <configuration>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -48,15 +57,15 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.0.1</version>
+                <configuration>
+                    <doclint>none</doclint>
+                </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <doclint>none</doclint>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -70,15 +79,13 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.0</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
@@ -101,18 +108,18 @@
             <url>http://mvnrepository.com/artifact/org.xerial</url>
         </repository>
         <repository>
-            <id>joestr-repo</id>
+            <id>joestr-repository</id>
             <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </repository>
     </repositories>
 
     <distributionManagement>
         <repository>
-            <id>joestr-repo</id>
+            <id>joestr-repository</id>
             <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </repository>
         <snapshotRepository>
-            <id>joestr-repo</id>
+            <id>joestr-repository</id>
             <url>https://repo.joestr.xyz/maven/repository/repository/</url>
         </snapshotRepository>
     </distributionManagement>
